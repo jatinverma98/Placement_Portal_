@@ -1,113 +1,195 @@
-# 🎓 Placement Portal
+# Placement Portal — Scalable Campus Recruitment Platform
 
-A full-stack Placement Portal built to manage campus recruitment.
-Companies can post jobs, students can apply, and admins can manage the entire placement process.
+A production-ready Placement Portal designed to streamline campus hiring workflows across students, recruiters, and administrators. The system is built with a modular architecture, RESTful APIs, role-based access control, and scalable data modeling to support real-world deployment scenarios.
+
+This project demonstrates backend engineering principles including API design, authentication, filtering, pagination, and maintainable service structure suitable for cloud deployment (AWS / Azure).
 
 ---
 
-# 🚀 Features
+# Architecture Overview
 
-### 👨‍🎓 Student
+The platform follows a standard client–server architecture:
 
-* Register & Login
-* View all jobs
-* Search & filter jobs
-* Apply for jobs
+* Frontend: SPA consuming REST APIs
+* Backend: Stateless REST service
+* Database: Document-based persistence
+* Auth: Token-based (JWT)
+* Deployment-ready for cloud environments
+
+```
+Client (React)
+      │
+      ▼
+REST API (Node.js / Express)
+      │
+      ▼
+MongoDB Database
+```
+
+---
+
+# Core Capabilities
+
+## Student Workflow
+
+* Account registration & authentication
+* Browse available opportunities
+* Search, filter, and paginate job listings
+* Apply to jobs
 * Track application status
-* Get notifications
+* Receive updates
 
-### 🏢 Company
+## Recruiter / Company Workflow
 
-* Register & Login
-* Post new jobs
+* Company authentication
+* Create job postings
 * View applicants
-* Accept / Reject applications
-* Manage job listings
+* Shortlist / reject candidates
+* Manage active job listings
 
-### 🛠 Admin
+## Admin Controls
 
-* Manage students
-* Manage companies
-* Manage jobs
-* Control application status
-* Dashboard overview
+* Manage students and companies
+* Monitor job postings
+* Control application lifecycle
+* System-wide moderation
 
 ---
 
-# 🧱 Tech Stack
+# Tech Stack
 
-### Frontend
-
-* React.js
-* Tailwind CSS
-* Axios
-* React Router DOM
-
-### Backend
+### Application Layer
 
 * Node.js
 * Express.js
 * MongoDB
-* Mongoose
+* Mongoose ODM
 
-### Authentication
+### Frontend
 
-* JWT (JSON Web Token)
-* Protected Routes
-* Role Based Access
+* React.js
+* React Router
+* Axios
+* Tailwind CSS (optional)
+
+### Authentication & Security
+
+* JWT-based authentication
+* Role-based authorization
+* Protected API routes
+* Middleware-driven access control
 
 ---
 
-# 📂 Project Structure
+# Key Engineering Highlights
+
+* RESTful API design
+* Scalable folder structure
+* Separation of concerns (routes, controllers, models)
+* Query-based filtering & search
+* Pagination support
+* Company-based filtering
+* Sorting support
+* Status-driven application workflow
+* Error handling middleware
+* Environment-based configuration
+
+---
+
+# Project Structure
 
 ```
 placement-portal
 │
-├── backend
-│   ├── controllers
-│   ├── models
-│   ├── routes
-│   ├── middleware
-│   └── server.js
+├── controllers
+├── models
+├── routes
+├── middleware
+├── config
+├── utils
+├── server.js
 │
-├── frontend
-│   ├── components
-│   ├── pages
-│   ├── context
-│   └── App.js
-│
-└── README.md
+└── frontend (optional)
 ```
 
 ---
 
-# ⚙️ Installation
+# API Design
 
-## 1. Clone Repository
+## Authentication
+
+POST /api/auth/register
+POST /api/auth/login
+POST /api/auth/logout
+
+---
+
+## Jobs
+
+GET /api/jobs
+POST /api/jobs
+GET /api/jobs/:id
+DELETE /api/jobs/:id
+
+Supports:
+
+* keyword search
+* department filter
+* company filter
+* pagination
+* sorting
+
+Example:
 
 ```
-git clone https://github.com/your-username/Placement-Portal.git
-cd Placement-Portal
+/api/jobs?keyword=developer&company=Google&page=1&sort=latest
 ```
 
 ---
 
-## 2. Backend Setup
+## Applications
+
+POST /api/applications
+GET /api/applications
+PUT /api/applications/:id
+
+Status Flow:
 
 ```
-cd backend
-npm install
+pending → shortlisted → accepted / rejected
 ```
 
-Create `.env`
+---
+
+# Environment Configuration
+
+Create a `.env` file:
 
 ```
 PORT=5000
 MONGO_URI=your_mongodb_connection
-JWT_SECRET=your_secret_key
+JWT_SECRET=your_secret
+NODE_ENV=development
 ```
 
-Run backend:
+---
+
+# Local Development
+
+Clone repository
+
+```
+git clone https://github.com/your-username/placement-portal.git
+cd placement-portal
+```
+
+Install dependencies
+
+```
+npm install
+```
+
+Run server
 
 ```
 npm run dev
@@ -115,81 +197,55 @@ npm run dev
 
 ---
 
-## 3. Frontend Setup
+# Scalability Considerations
 
-```
-cd frontend
-npm install
-npm start
-```
+This system is designed with cloud deployment in mind:
 
----
-
-# 🔐 Environment Variables
-
-Create `.env` file in backend:
-
-```
-PORT=5000
-MONGO_URI=
-JWT_SECRET=
-```
+* Stateless backend (horizontal scaling ready)
+* Environment-based config
+* MongoDB Atlas compatible
+* API gateway compatible
+* Containerization ready (Docker)
+* CDN friendly frontend deployment
 
 ---
 
-# 📌 API Endpoints
+# Deployment Options
 
-### Auth
+AWS
 
-* POST /api/auth/register
-* POST /api/auth/login
-* POST /api/auth/logout
+* EC2 / Elastic Beanstalk
+* MongoDB Atlas
+* S3 + CloudFront (frontend)
 
-### Jobs
+Azure
 
-* GET /api/jobs
-* POST /api/jobs
-* GET /api/jobs/:id
-* DELETE /api/jobs/:id
-
-### Applications
-
-* POST /api/apply
-* GET /api/applications
-* PUT /api/applications/:id
+* Azure App Service
+* Azure Cosmos DB (Mongo API)
+* Azure Static Web Apps
 
 ---
 
-# 🎯 Future Improvements
+# Future Enhancements
 
-* Resume upload
-* Email notifications
-* Admin dashboard analytics
+* Resume upload (S3 / Blob storage)
+* Email notifications (SES / SendGrid)
+* Real-time updates (WebSockets)
+* Admin analytics dashboard
 * Interview scheduling
 * Offer letter generation
-* Real-time notifications
+* Multi-college support
+* RBAC permission matrix
 
 ---
 
-# 📸 Screenshots
+# License
 
-(Add screenshots here)
-
----
-
-# 🤝 Contributing
-
-Pull requests are welcome. For major changes, please open an issue first.
+MIT License
 
 ---
 
-# 📜 License
-
-This project is open source and available under the MIT License.
-
----
-
-# 👨‍💻 Author
+# Author
 
 Jatin Verma
-Placement Portal Project
+Placement Portal — Backend Engineering Project
