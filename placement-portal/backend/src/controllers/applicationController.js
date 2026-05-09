@@ -38,7 +38,8 @@ exports.applyToJob = async (req, res) => {
         const application = await Application.create({
             job: jobId,
             student: studentId,
-            resume: studentProfile.resumeUrl // Student model se resume utha liya
+            company: job.company, // Fix: Added company ID from the job
+            resume: studentProfile.resumeUrl || "No resume"
         });
 
         res.status(201).json({ success: true, data: application });
@@ -52,9 +53,18 @@ exports.applyToJob = async (req, res) => {
 exports.getJobApplications = async (req, res) => {
     try {
         const applications = await Application.find({ job: req.params.jobId })
-            .populate('student', 'name email rollNumber cgpa skills resumeUrl');
+            .populate('student', 'name email profilePicUrl');
 
-        res.status(200).json({ success: true, count: applications.length, data: applications });
+        // We also need student profile details (CGPA, etc. which are in Student model)
+        const detailedApplications = await Promise.all(applications.map(async (app) => {
+            const studentProfile = await Student.findOne({ user: app.student._id });
+            return {
+                ...app._doc,
+                studentProfile
+            };
+        }));
+
+        res.status(200).json({ success: true, count: detailedApplications.length, data: detailedApplications });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
     }

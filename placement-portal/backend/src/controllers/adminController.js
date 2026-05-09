@@ -76,14 +76,18 @@ exports.getAllJobs = async (req, res) => {
 };
 
 //verify company logic
+// toggle verify company logic
 exports.verifyCompany = async (req, res) => {
     try {
-        const company = await User.findByIdAndUpdate(
-            req.params.id,
-            { isVerified: true },
-            { new: true }
-        );
-        res.status(200).json({success: true, data: company});
+        const user = await User.findById(req.params.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        user.isVerified = !user.isVerified; // Toggle status
+        await user.save();
+
+        res.status(200).json({ success: true, data: user });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });   
     }
@@ -92,7 +96,34 @@ exports.verifyCompany = async (req, res) => {
 // stats logic
 exports.getPlacementStats = async (req, res) => {
     try {
-        res.status(200).json({ success: true, message: "Stats logic goes here" });
+        const totalStudents = await User.countDocuments({ role: 'student' });
+        const totalCompanies = await User.countDocuments({ role: 'company' });
+        const totalJobs = await Job.countDocuments();
+        const totalApplications = await Application.countDocuments();
+        
+        // Status breakdown
+        const appliedCount = await Application.countDocuments({ status: 'applied' });
+        const shortlistedCount = await Application.countDocuments({ status: 'shortlisted' });
+        const acceptedCount = await Application.countDocuments({ status: 'accepted' });
+        const rejectedCount = await Application.countDocuments({ status: 'rejected' });
+
+        res.status(200).json({ 
+            success: true, 
+            data: {
+                counts: {
+                    students: totalStudents,
+                    companies: totalCompanies,
+                    jobs: totalJobs,
+                    applications: totalApplications
+                },
+                breakdown: {
+                    applied: appliedCount,
+                    shortlisted: shortlistedCount,
+                    accepted: acceptedCount,
+                    rejected: rejectedCount
+                }
+            } 
+        });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });   
     }

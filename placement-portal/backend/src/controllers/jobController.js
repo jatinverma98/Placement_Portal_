@@ -117,6 +117,32 @@ exports.getJobs = async (req, res) => {
     }
 };
 
+// @desc    Get Jobs by Current Company
+// @route   GET /api/job/my-jobs
+exports.getMyJobs = async (req, res) => {
+    try {
+        const jobs = await Job.find({ company: req.user._id }).sort({ createdAt: -1 });
+        
+        // For each job, count applications
+        const Application = require('../models/Application');
+        const jobsWithStats = await Promise.all(jobs.map(async (job) => {
+            const applicantsCount = await Application.countDocuments({ job: job._id });
+            return {
+                ...job._doc,
+                applicantsCount
+            };
+        }));
+
+        res.status(200).json({
+            success: true,
+            count: jobsWithStats.length,
+            data: jobsWithStats
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 // @desc    Get Single Job by ID (For Job Details Page)
 // @route   GET /api/job/:id
 exports.getJobById = async (req, res) => {

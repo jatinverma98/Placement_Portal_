@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
-const morgan = require('morgan'); // Logs ke liye naya add kiya
+const morgan = require('morgan');
 const errorHandler = require('./middleware/errorHandler');
 
 // Route imports
@@ -18,17 +18,20 @@ dotenv.config();
 
 const app = express();
 
-// --- 1. GLOBAL MIDDLEWARES ---
-app.use(cors()); 
+//GLOBAL MIDDLEWARES
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+})); 
 app.use(express.json()); 
-app.use(express.urlencoded({ extended: true })); // Form data handle karne ke liye
+app.use(express.urlencoded({ extended: true })); // Form data handling
 
-// Request logging (Ab tujhe terminal mein dikhega kaunsa URL hit hua hai)
+// Request logging (terminal me error mil jyega)
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
 }
 
-// --- 2. ROUTES MOUNTING ---
+//SARE ROUTES
 app.use('/api/auth', authRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applicationRoutes);
@@ -40,7 +43,7 @@ app.use('/api/companies', companyRoutes);
 // Static folder for uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// 404 Route (Agar koi galat URL daale toh)
+// ROUTE KA ERROR 
 app.use('*', (req, res) => {
     res.status(404).json({
         success: false,
@@ -48,7 +51,7 @@ app.use('*', (req, res) => {
     });
 });
 
-// --- 3. ERROR HANDLER ---
+//OVER ALL ERROR HANDLER
 app.use(errorHandler);
 
 module.exports = app;

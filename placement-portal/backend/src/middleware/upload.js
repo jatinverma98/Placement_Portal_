@@ -11,12 +11,13 @@ const storage = multer.diskStorage({
   }
 });
 
-// 2. File Filter: Sirf PDF allow karenge
+// 2. File Filter: allow PDF for resumes and Images for profile pics
 const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'application/pdf') {
+  const allowedMimeTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+  if (allowedMimeTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb(new Error('Only PDF files are allowed!'), false);
+    cb(new Error('Only PDF and Image (JPEG/PNG) files are allowed!'), false);
   }
 };
 

@@ -30,7 +30,10 @@ router.get('/profile', getStudentProfile);
  * @desc    Profile update + Resume upload logic
  * Note: 'resume' wahi key honi chahiye jo frontend/Postman se bhejoge
  */
-router.put('/profile', upload.single('resume'), updateStudentProfile);
+router.put('/profile', upload.fields([
+    { name: 'resume', maxCount: 1 },
+    { name: 'profilePic', maxCount: 1 }
+]), updateStudentProfile);
 
 /**
  * @route   GET /api/students/my-applications

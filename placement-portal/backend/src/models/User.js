@@ -32,6 +32,14 @@ const userSchema = new mongoose.Schema({
   profileFetched: { 
     type: Boolean, 
     default: false 
+  },
+  profilePicUrl: {
+    type: String,
+    default: ""
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
   }
 }, { timestamps: true });
 

@@ -9,36 +9,55 @@ const studentSchema = new mongoose.Schema({
     },
     rollNumber: { 
         type: String, 
-        required: [true, 'Roll number is required'], 
         unique: true,
+        sparse: true, // Allows nulls while keeping unique constraint
         trim: true 
     },
     department: { 
         type: mongoose.Schema.Types.ObjectId, 
-        ref: 'Department', // String ke bajaye Department model se link kiya hai
-        required: [true, 'Department is required'] 
+        ref: 'Department',
     },
     cgpa: { 
         type: Number, 
-        required: [true, 'CGPA is required'],
         min: [0, 'CGPA cannot be less than 0'],
         max: [10, 'CGPA cannot be more than 10']
     },
     skills: {
-        type: [String], // Example: ["React", "Node.js", "Python"]
+        type: [String], 
         default: []
+    },
+    bio: {
+        type: String,
+        trim: true
+    },
+    college: {
+        type: String,
+        trim: true
+    },
+    age: {
+        type: Number
+    },
+    currentSemester: {
+        type: Number
+    },
+    previousSemesterMarks: {
+        type: [Number], // Storing as simple list of pointers for now
+        default: []
+    },
+    profilePicUrl: {
+        type: String,
+        default: ""
     },
     resumeUrl: { 
         type: String, 
-        default: "" // Isme upload.js middleware se aaya path save hoga
+        default: "" 
     },
     batch: {
-        type: Number, // Example: 2026
-        required: true
+        type: Number,
     },
     isVerified: { 
         type: Boolean, 
-        default: false // Admin verify karega tabhi placement mein baith payega
+        default: false 
     }
 }, { 
     timestamps: true // CreatedAt aur UpdatedAt tracks ke liye

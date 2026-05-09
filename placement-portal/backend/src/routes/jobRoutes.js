@@ -3,15 +3,19 @@ const router = express.Router();
 const { 
     createJob, 
     getJobs, 
-    getJobById,      // Naya: Single job dekhne ke liye
-    updateJob,       // Naya: Job edit karne ke liye
+    getMyJobs,       // Added
+    getJobById,      
+    updateJob,       
     deleteJob 
 } = require('../controllers/jobController');
 
 const { protect } = require('../middleware/auth');
 const { authorize } = require('../middleware/roleCheck');
 
-// 1. Sabhi logged-in users jobs dekh sakte hain
+// 1. Company can see their OWN jobs
+router.get('/my-jobs', protect, authorize('company'), getMyJobs);
+
+// 2. Sabhi logged-in users jobs dekh sakte hain
 router.get('/', protect, getJobs);
 
 // 2. Specific job ki detail dekhne ke liye (Frontend pe click karne par)

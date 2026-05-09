@@ -32,28 +32,51 @@ exports.getStudentProfile = async (req, res) => {
  */
 exports.updateStudentProfile = async (req, res) => {
     try {
-        const { bio, skills, college, graduationYear, cgpa, department } = req.body;
+        const { 
+            name, bio, skills, college, batch, rollNumber,
+            cgpa, department, age, currentSemester, previousSemesterMarks 
+        } = req.body;
         
+        // 1. Update User Details if provided
+        const userUpdate = {};
+        if (name) userUpdate.name = name;
+        if (req.files && req.files.profilePic) {
+            userUpdate.profilePicUrl = `/uploads/${req.files.profilePic[0].filename}`;
+        }
+        
+        if (Object.keys(userUpdate).length > 0) {
+            await User.findByIdAndUpdate(req.user._id, userUpdate);
+        }
+
         const profileFields = {
             user: req.user._id,
             bio,
-            skills: skills ? skills.split(",").map(s => s.trim()) : [],
+            skills: skills ? (Array.isArray(skills) ? skills : skills.split(",").map(s => s.trim())) : [],
             college,
-            graduationYear,
+            batch,
+            rollNumber,
             cgpa,
-            department // Dept ID from Department model
+            department: department || undefined,
+            age,
+            currentSemester,
+            previousSemesterMarks: previousSemesterMarks ? (Array.isArray(previousSemesterMarks) ? previousSemesterMarks : previousSemesterMarks.split(",").map(m => parseFloat(m))) : []
         };
 
-        // Resume upload logic (agar req.file exist karti hai)
-        if (req.file) {
-            profileFields.resume = req.file.path;
+        // 2. Multi-file upload logic (profilePic and resume)
+        if (req.files) {
+            if (req.files.resume) {
+                profileFields.resumeUrl = `/uploads/${req.files.resume[0].filename}`;
+            }
+            if (req.files.profilePic) {
+                profileFields.profilePicUrl = `/uploads/${req.files.profilePic[0].filename}`;
+            }
         }
 
         const student = await Student.findOneAndUpdate(
             { user: req.user._id },
             { $set: profileFields },
             { new: true, upsert: true, runValidators: true }
-        );
+        ).populate('user', 'name email role');
 
         res.status(200).json({
             success: true,

@@ -1,3 +1,4 @@
+require('dotenv').config();
 const app = require('./src/app');
 const connectDB = require('./src/db/connection'); 
 const dotenv = require('dotenv');
@@ -5,7 +6,6 @@ const configureDB = require('./src/db/config');
 const errorHandler = require('./src/middleware/errorHandler'); // Import sahi hai
 
 
-require('dotenv').config();
 
 // 2. DB Config & Connect
 configureDB(); 
@@ -22,4 +22,3 @@ app.listen(PORT, () => {
 });
 
 const sendEmail = require('./src/utils/sendEmail');
-
