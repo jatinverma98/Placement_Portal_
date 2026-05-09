@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api', // Matches backend server
+  baseURL: '/api', // Matches backend server
   withCredentials: true, // Necessary if backend sets HTTP-only cookies
   headers: {
     'Content-Type': 'application/json'
